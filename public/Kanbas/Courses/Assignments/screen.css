@@ -1,0 +1,19 @@
+.breadcrumb-item + .breadcrumb-item::before {
+    content: none;
+}
+
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: '>';
+    padding: 0 0.5rem;  
+}
+.wd-pos-relative {
+    top: 48px;
+    position: relative;
+    }
+.wd-border-rounded {
+        border-radius: 50px;
+        border: 1px solid white;
+        /* other styling properties if needed */
+    }
+    
