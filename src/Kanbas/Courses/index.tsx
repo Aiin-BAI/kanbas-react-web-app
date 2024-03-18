@@ -10,14 +10,15 @@ import Assignments from "./Assignments";
 import AssignmentEditor from "./Assignments/Editor";
 import Grades from "./Grades";
 
-function Courses() {
+function Courses({ courses }: { courses: any[]; }) {
 const {cid} =useParams();
 const{pathname} = useLocation();
 const coursePath = pathname.slice(pathname.indexOf('/Courses/') + '/Courses/'.length);
 const breadcrumb = coursePath.split('/').map((section) => (
     <span key={section}>{section} &gt; </span>
   ));
-const course = courses.find((course) => course._id ===cid);
+  const course = courses.find((course) => course._id === cid);
+
 
 
 return (

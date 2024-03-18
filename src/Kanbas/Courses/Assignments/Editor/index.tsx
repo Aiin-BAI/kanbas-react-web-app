@@ -1,18 +1,55 @@
-import React from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux"; 
+import { useNavigate, useParams, Link,useLocation } from "react-router-dom";
 import {  FaEllipsisV,  } from "react-icons/fa";
 import { assignments } from "../../../Database";
+import { addAssignment, updateAssignment,deleteAssignment,setAssignment } from "../reducer"; 
+import { KanbasState } from "../../../store";
 
 function AssignmentEditor() {
 const { assignmentId } = useParams();
 const assignment = assignments.find(
 (assignment) => assignment._id === assignmentId);
-const { courseId } = useParams();
+const { cid } = useParams();
 const navigate = useNavigate();
-const handleSave = () => {
-console.log("Actually saving assignment TBD in later assignments");
-navigate(`/Kanbas/Courses/${courseId}/Assignments`);
+const dispatch = useDispatch();
+const [newAssignment, setNewAssignment] = useState({
+    title: "",
+    description: "",
+    points: 0, 
+    dueDate: "",
+    availablefrom:"",
+    until:"",
+  });
+  const handleChange = (e:React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setNewAssignment(prevAssignment => ({
+        ...prevAssignment,
+        [name]: value,
+    }));
 };
+
+const handleSave = () => {
+
+    console.log("Saving assignment:", newAssignment);
+
+    if (assignmentId === 'new') {
+        // 添加新的assignment
+        dispatch(addAssignment({
+            ...newAssignment,
+            course: cid, // 假设你需要将assignment关联到特定课程
+        }));
+    } else {
+        // 更新现有的assignment
+        dispatch(updateAssignment({
+            ...newAssignment,
+            _id: assignmentId, // 确保包含assignment的_id以正确更新
+            course: cid,
+        }));
+    }
+    navigate(`/Kanbas/Courses/${cid}/Assignments`);
+};
+
 return (
 <>
 {<div>
@@ -23,15 +60,41 @@ return (
     </div>}
 <div>
 <h2>Assignment Name</h2>
-<input value={assignment?.title}
-className="form-control mb-2" />
+<input  name="title" value={newAssignment?.title}
+className="form-control mb-2"  onChange={handleChange}/>
+    
+
+<textarea  value={newAssignment.description}name="description" className="form-control mt-2" />
+<label>Points</label>
+<input name="points" value={newAssignment?.points}
+className="form-control mb-2"onChange={handleChange} />
+<label>Due Date</label>
+<input  value = {newAssignment?.dueDate}name="dueDate" className="form-control" type="date" onChange={handleChange}
+                />
+
+<div>
+    <table>
+        <tr>
+            <td><label>Available From</label></td>
+            <td><label>Until</label></td>
+        </tr>
+        <tr>
+            <td> <input value={newAssignment?.availablefrom}name="availablefrom"className="form-control" type="date"  onChange={handleChange} /></td>
+            <td> <input value={newAssignment?.until}name="until"className="form-control" type="date"  onChange={handleChange} /></td>
+        </tr>
+
+    </table>
+</div>
 <button onClick={handleSave} className="btn btn-success ms-2 float-end">
 Save
 </button>
-<Link to={`/Kanbas/Courses/${courseId}/Assignments`}
-className="btn btn-danger float-end">
+<Link to={`/Kanbas/Courses/${cid}/Assignments`}
+className="btn btn-danger float-end mb-2">
 Cancel
-</Link>
+</Link>  
+
+
+       
 </div>
 </>
 );
